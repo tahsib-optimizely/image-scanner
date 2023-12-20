@@ -23,12 +23,13 @@ jobs:
         with:
           context: .
           push: true
-          tags: tahsib/go-app:latest
+          tags: tahsib/go-app:${{ github.head_ref }}.${{github.sha}}
       -
         name: Scan for vulnerabilities
         uses: crazy-max/ghaction-container-scan@v3
         with:
-          image: tahsib/go-app:latest
+          image: tahsib/go-app:${{ github.head_ref }}.${{github.sha}}
+          dockerfile: ./Dockerfile
       -
         name: Upload SARIF file
         if: ${{ steps.scan.outputs.sarif != '' }}
