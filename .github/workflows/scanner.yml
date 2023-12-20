@@ -15,3 +15,9 @@ jobs:
         uses: crazy-max/ghaction-container-scan@v3
         with:
           image: nginx:latest
+      -
+        name: Upload SARIF file
+        if: ${{ steps.scan.outputs.sarif != '' }}
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif }}
