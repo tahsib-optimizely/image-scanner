@@ -1,10 +1,10 @@
-FROM golang:1.19
+FROM golang:1.21.5
 
 # Set destination for COPY
 WORKDIR /app
 
 # Download Go modules
-COPY go.mod go.sum ./
+COPY go.mod ./
 RUN go mod download
 
 # Copy the source code. Note the slash at the end, as explained in
@@ -12,7 +12,7 @@ RUN go mod download
 COPY *.go ./
 
 # Build
-RUN CGO_ENABLED=0 GOOS=linux go build -o /docker-go-app
+RUN CGO_ENABLED=0 GOOS=linux go build -o /go-app
 
 # Optional:
 # To bind to a TCP port, runtime parameters must be supplied to the docker command.
@@ -22,4 +22,4 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /docker-go-app
 EXPOSE 8080
 
 # Run
-CMD ["/docker-go-app"]
+CMD ["/go-app"]
