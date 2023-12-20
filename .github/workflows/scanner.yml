@@ -26,6 +26,7 @@ jobs:
           tags: tahsib/go-app:${{github.sha}}
       -
         name: Scan for vulnerabilities
+        id: scan
         uses: crazy-max/ghaction-container-scan@v3
         with:
           image: tahsib/go-app:${{github.sha}}
