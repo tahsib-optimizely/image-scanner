@@ -1,4 +1,4 @@
-name: ci
+name: Container Vulnerability Scanner
 
 on:
   push:
@@ -14,32 +14,21 @@ jobs:
       actions: read
       contents: read
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v3
-      -
-        name: Login to Docker Hub
-        uses: docker/login-action@v3
+      
+      - name: Build an image from Dockerfile
+        run: |
+          docker build -t docker.io/tahsib/go-app:${{ github.sha }} .
+      
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      -
-        name: Build
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          tags: tahsib/go-app:${{github.sha}}
-      -
-        name: Scan for vulnerabilities
-        id: scan
-        uses: crazy-max/ghaction-container-scan@v3
-        with:
-          image: tahsib/go-app:${{github.sha}}
-          dockerfile: ./Dockerfile
-      -
-        name: Upload SARIF file
-        if: ${{ steps.scan.outputs.sarif != '' }}
+          image-ref: 'docker.io/my-organization/my-app:${{ github.sha }}'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+      
+      - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v2
         with:
-          sarif_file: ${{ steps.scan.outputs.sarif }}
+          sarif_file: 'trivy-results.sarif'
