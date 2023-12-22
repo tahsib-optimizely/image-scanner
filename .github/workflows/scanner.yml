@@ -25,7 +25,7 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'docker.io/tahsib/go-app:${{ github.sha }}'
-          format: 'table,sarif'
+          format: 'table'
           output: 'trivy-results.sarif'
       
       - name: Upload SARIF file
